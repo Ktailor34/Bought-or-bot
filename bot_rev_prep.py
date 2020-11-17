@@ -13,15 +13,38 @@ reviews = X.astype(str).values.tolist()
 
 def sentiment_analyzer_scores(review):
 	score = analyze.polarity_scores(review)
-	return str(score) 
+	return score
 
-A = []
+Sentiment=[]
 for i in reviews:
-	A.append(sentiment_analyzer_scores(i))
+    score= sentiment_analyzer_scores(i)
+    compound = score['compound']
+    #positive
+    if(compound >= 0.05):
+        Sentiment.append('pos')
+        
+    #neutral
+    if((compound > -0.05) and (compound < 0.05)):
+        Sentiment.append('neu')
+        
+    #negative
+    if(compound <= -0.05):
+        Sentiment.append('neg')
 
-dataset["score"] = A
+dataset['reviewType'] = Sentiment
+
+dataset.to_csv('bot_reviews.csv')
 
 
 
-#sentiment_analyzer_scores(j)
-	
+
+
+
+
+    
+   
+    
+
+
+
+
