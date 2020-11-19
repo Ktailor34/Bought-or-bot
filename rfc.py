@@ -1,6 +1,5 @@
-# Creating a DataFrame of given iris dataset.
+# Creating a DataFrame of given trainData dataset.
 import pandas as pd
-from sklearn import datasets
 
 # Import train_test_split function
 from sklearn.model_selection import train_test_split
@@ -11,45 +10,67 @@ from sklearn import metrics
 #Import Random Forest Model
 from sklearn.ensemble import RandomForestClassifier
 
-#Load dataset
-iris = datasets.load_iris()
+from sklearn import preprocessing
 
-# print the label species(setosa, versicolor,virginica)
-print(iris.target_names)
+trainData = pd.read_json('yelp_combined_dataset.json')
+testData = pd.read_csv('bot_reviews.csv')
 
-# print the names of the four features
-print(iris.feature_names)
+testData.drop(['text'], axis=1)
 
-# print the iris data (top 5 records)
-print(iris.data[0:5])
+trainData = trainData.append(testData)
 
-# print the iris labels (0:setosa, 1:versicolor, 2:virginica)
-print(iris.target)
 
 data=pd.DataFrame({
-    'sepal length':iris.data[:,0],
-    'sepal width':iris.data[:,1],
-    'petal length':iris.data[:,2],
-    'petal width':iris.data[:,3],
-    'species':iris.target
+    # 'user_id':trainData['user_id'],
+    'stars':trainData['stars'],
+    # 'text':trainData['text'],
+    'review_count':trainData['review_count'],
+    # 'friends':trainData['friends'],
+    'isFake':trainData['isFake'],
+    'friendCount':trainData['friendCount'],
+    'reviewType':trainData['reviewType']
 })
 data.head()
 
-X=data[['sepal length', 'sepal width', 'petal length', 'petal width']]  # Features
-y=data['species']  # Labels
+data['reviewType'] = [(-1 if value == 'neg' else (0 if value == 'neu' else 1)) for value in data['reviewType']]
+
+print(data['isFake'])
+f = open("test.txt", "a")
+f.write((data['isFake'].to_string()))
+f.close()
+
+
+# x = data.values #returns a numpy array
+# min_max_scaler = preprocessing.MinMaxScaler()
+# x_scaled = min_max_scaler.fit_transform(x)
+# data = pd.DataFrame(x_scaled)
+
+# X=data[['user_id', 'stars', 'text','review_count','friends','friendCount','reviewType']]  # Features
+X= data[['stars','review_count','friendCount','reviewType']]  # Features
+y= data['isFake']  # Labels
+
+trainData.feature_names=['stars','review_count','friendCount','reviewType']
 
 # Split dataset into training set and test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,random_state=222) # 70% training and 30% test
+
 
 #Create a Gaussian Classifier
 clf=RandomForestClassifier(n_estimators=100)
+
+print(X_train)
+print(y_train)
 
 #Train the model using the training sets y_pred=clf.predict(X_test)
 clf.fit(X_train,y_train)
 
 y_pred=clf.predict(X_test)
 
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
 # Model Accuracy, how often is the classifier correct?
+print(classification_report(y_test,y_pred))
+print(confusion_matrix(y_test,y_pred))
 print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 
 
@@ -70,5 +91,18 @@ RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
             oob_score=False, random_state=None, verbose=0,
             warm_start=False)
 
-feature_imp = pd.Series(clf.feature_importances_,index=iris.feature_names).sort_values(ascending=False)
-feature_imp
+feature_imp = pd.Series(clf.feature_importances_,index=trainData.feature_names).sort_values(ascending=False)
+
+print("important feats", feature_imp)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Creating a bar plot
+sns.barplot(x=feature_imp, y=feature_imp.index)
+# Add labels to your graph
+plt.xlabel('Feature Importance Score')
+plt.ylabel('Features')
+plt.title("Visualizing Important Features")
+plt.legend()
+plt.show()
