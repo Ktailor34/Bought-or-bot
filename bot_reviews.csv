@@ -1,5 +1,4 @@
-,0,1,2,3,4,reviewType
-0,isFake,friendCount,reviewCount,stars,review,neu
+rowCount,isFake,friendCount,review_count,stars,text,reviewType
 1,Y,0,13,1,Pretty sure there's a load of MSG in this.,pos
 2,Y,0,1,1,the wings are to expensive and taste like cardboard i rather go to KFC rather than HERL RAYS,pos
 3,Y,3,10,1,eh,neu
@@ -203,7 +202,8 @@ It was generic, I've certainly had the same or better elsewhere. Stick to mains,
 167,Y,0,31,3,Worth the long wait if you are patient with no place to wait it out but the food is excellent.,pos
 168,Y,0,2,3,Good Burma Star,pos
 169,Y,3,37,3,"Not bad
-",pos
+
+",pos
 170,Y,0,14,4,"Great atmosphere but service could've used some work. (Although, in their defense, another table in our section was a hassle.) Ribs were amazing. Sauce and rub was so good that I picked some up.",pos
 171,Y,0,2,4,Awesome food! Hardly any fat on the ribs!,pos
 172,Y,3,5,4,As everyone says... It was the best BBQ. Servers were very friendly and made sure we were satisfied. Recommended highly.,pos
